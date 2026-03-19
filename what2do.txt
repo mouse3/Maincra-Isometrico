@@ -1,0 +1,5 @@
+2. Añadir bloques de altura. (con hitbox para poder cumplir la tarea 3)
+3.  La transparencia del bloque aumenta si está en medio de la cámara.
+4. Añadir mapa procedural.
+5. Añadir chat de comandos.
+6. Añadir traslocación.

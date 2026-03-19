@@ -261,3 +261,8 @@ class MapaIsometrico:
                 color = self.colores.get(tile, (255,255,255))
 
                 self.draw_tile(surface, color, iso_x, iso_y)
+
+
+
+class bloque():
+    def __init__(self, coordenada : tuple, altura : float, path_textura : str)
