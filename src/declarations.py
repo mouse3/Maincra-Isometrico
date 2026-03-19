@@ -263,6 +263,52 @@ class MapaIsometrico:
                 self.draw_tile(surface, color, iso_x, iso_y)
 
 
+class Bloque:
+    def __init__(self, x, y, z=1, color=(100, 200, 100)):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.color = color
 
-class bloque():
-    def __init__(self, coordenada : tuple, altura : float, path_textura : str)
+    def draw_iso(self, surface, x, y, mapa_iso, zoom=1.0):
+
+        hw = (mapa_iso.tile_w // 2) * zoom
+        hh = (mapa_iso.tile_h // 2) * zoom
+        altura_px = self.z * (mapa_iso.tile_h // 2) * zoom
+
+        # -------- CARA SUPERIOR --------
+        top = [
+            (x, y - hh),
+            (x + hw, y),
+            (x, y + hh),
+            (x - hw, y)
+        ]
+
+        # -------- CARA IZQUIERDA --------
+        left = [
+            (x - hw, y),
+            (x, y + hh),
+            (x, y + hh + altura_px),
+            (x - hw, y + altura_px)
+        ]
+
+        # -------- CARA DERECHA --------
+        right = [
+            (x + hw, y),
+            (x, y + hh),
+            (x, y + hh + altura_px),
+            (x + hw, y + altura_px)
+        ]
+
+        # sombreado
+        color_top = self.color
+        color_left = tuple(max(c - 40, 0) for c in self.color)
+        color_right = tuple(max(c - 80, 0) for c in self.color)
+
+        pygame.draw.polygon(surface, color_left, left)
+        pygame.draw.polygon(surface, color_right, right)
+        pygame.draw.polygon(surface, color_top, top)
+
+        pygame.draw.polygon(surface, (0,0,0), top, 1)
+        pygame.draw.polygon(surface, (0,0,0), left, 1)
+        pygame.draw.polygon(surface, (0,0,0), right, 1)

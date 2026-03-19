@@ -25,11 +25,12 @@ cell_h = 16  # El píxel nº cell_h se incluye.
 sprite_path = "sprite/player2.png"
 
 #MAP
+
 # 0: grass
 # 1: sand
 # 2: water
-tile_w = 64
-tile_h = 32
+tile_w = 64*2
+tile_h = 32*2
 
 map_offset = (width//2,150)
 
