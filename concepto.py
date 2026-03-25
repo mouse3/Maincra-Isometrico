@@ -22,6 +22,7 @@ class BloqueProyeccion:
         f(y, z) Perfil
         g(x, z) Alzado
         h(x, y) Planta
+        V=\{ (x, y, z)\in\mathbb{R}^3 | f(y, z) = g(x, z) = h(x, y)\}. 
         """
         # Extraemos las listas para iterar
         alzado = dictionary.get("Alzado", [])
@@ -40,7 +41,7 @@ class BloqueProyeccion:
                             nuevo_punto = (Punto_Alzado[0], Punto_Perfil[0], Punto_Alzado[1])
                             if nuevo_punto not in V:
                                 V.append(nuevo_punto)
-        return V
+        return V # V : list of tuples
 
 # --- Ejemplo de ejecución ---
 bloquecito = BloqueProyeccion("ola", 1)
