@@ -114,5 +114,5 @@ class GeneradorProyecciones:
 
 # Ejecución
 # Nota: Asegúrate de que "imagen_aa4ca1.png" esté en el mismo directorio o ajusta la ruta.
-gen = GeneradorProyecciones("assets/bloques/prueba1.png", tam_celda=1, escala=1.0)
+gen = GeneradorProyecciones("assets/bloques/prueba3.png", tam_celda=1, escala=1.0)
 gen.construir()
