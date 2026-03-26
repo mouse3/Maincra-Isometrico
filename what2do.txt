@@ -2,4 +2,4 @@
 3. La transparencia del bloque aumenta si está en medio de la cámara.
 4. Añadir mapa procedural.
 5. Añadir chat de comandos.
-6. Añadir traslocación.
+6. Añadir traslocación (giro del personaje).

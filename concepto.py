@@ -4,8 +4,16 @@ import numpy as np
 Dividir proyecciones
 Transformar proyecciones a iso. por medio de Cr y escala : float
 Cambiar la orientación de la proyección respecto al boceto (modo espejo para el alzado)
-Detectar subregiones por el método del fill
-PD: Se sup. qel dict. de ej. rep. todos los ptos. una vez aplic. todas las transfo. anteriormte. men.
+Detectar subregiones
+    1. Método flood fill de 4 dirr. Complejidad del tipo O(N) {N: nº pixeles}
+    
+PD: Se sup. qel dict. de ej. rep. todos los ptos. una vez aplic.as todas las transfo. anteriormte. men.
+
+Se guarda el hash de la figura a subir en un .txt, tras esto se ejecuta toda la función para sacar el diccionario final;
+una vez con el diccionario final, se guarda en un json donde al hash se le asigna el mismo diccionario.
+Cuando el juego vuelve a ejecutarse, primero verifica si todas las imágenes de las texturas están incluidas en el
+.txt con los hashes, la imagen q no esté se procesa y blablabla y luego se añade nuevamente al .txt.
+
 
 """
 
@@ -16,6 +24,86 @@ class BloqueProyeccion:
         self.proyecciones_raw = {"Alzado": set(), "Perfil": set(), "Planta": set()}
         self.max_z = 0
     
+    def detector_vacio(self):
+        from PIL import Image
+        imagen = Image.open(self.image_path)
+        pixeles = imagen.load()
+        ancho, alto = imagen.size
+        for y in range(alto):
+            for x in range(ancho):
+                print(f"Pixel en ({x}, {y}): {pixeles[x, y]}")
+
+    """
+    Teniendo el mapa de colores, 
+    Sabiendo q el sistema no ignora las diagonales, hay q definir q:
+    BUCLE PRINCIPAL:
+    BUCLE:
+    A un pto. negro se le asigna un pto. A(color random != (0, 0, 0)) y otro pto. B(color random != (0, 0, 0)) 
+    solo si se cumple q{ 
+        1. Hay min. un px. negro en los 3 px izq.
+        2. Hay min. un px. negro en los 3 px drch.
+        3. Hay min. un px. negro en los 3 px inf.
+        4. Hay min. un px. negro en los 3 px sup.
+        5. Hay min. 2 px. color (random != (0, 0, 0)) en los px circundantes
+    }
+    SI se cumple que cantidad [px (random != (0, 0, 0)) en los 8 puntos circundantes) = 2. Ergo A y B corresponden a ellos 2.
+    Aplicamos flood fill entre A y B. 
+    {
+                def flood_fill_conecta(ruta_imagen : PIL.load(), inicio, fin):
+                    # ruta_imagen es una de las proyecciones
+                    ancho, alto = img.size
+                    visitado = set()
+                    cola = deque([inicio])
+                    while cola:
+                        x, y = cola.popleft()
+                        if (x, y) == fin:
+                            return True
+                        if (x, y) in visitado:
+                            continue
+                        
+                        visitado.add((x, y))
+                        if pixels[x, y][:3] == (0, 0, 0):
+                            continue  # pared
+                        
+                        for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
+                            nx, ny = x + dx, y + dy
+                            if 0 <= nx < ancho and 0 <= ny < alto:
+                                cola.append((nx, ny))
+    }
+    return False
+    Si no hay path:
+        -Entonces agregamos A a una lista tipo "Subreg_1".
+    Si hay path:
+        - Avanzamos al siguiente px negro y ejecutamos otra vez el bucle
+    
+    CUANDO un px negro tenga tres circundantes tal que los tres no estén en el mismo sector (px inf. o sup. o dch. o izq.), 
+    puede implicar una bifurcación, por tanto (nada, no se q implica esto pero algo útil será). 
+    
+    TERMINAMOS EL BUCLE.
+    Comenzamos nuevo bucle
+    # hay q mejorar el pseudocódigo de aquí hasta nuevo comentario.
+    Una vez tenemos las listas, recorremos todos los puntos con el mismo método fill para así contar cuantas subregiones hay,
+    cuando tengamos las subregiones separadas
+    ¿"Rellenamos/incluimos"? todos los ptos. dentro del {contorno q describa la lista).
+    # Hasta aquí la mejora del pseudocódigo. 
+    PASAMOS A OTRA PROYECCIÓN
+    TERMINAMOS EL BUCLE PRINCIPAL
+    Creamos un diccionario 
+    diccionario_final{
+        "Alzado": {
+            "subreg1":[(x, y, z), (x, y, z), (x, y, z)]
+            "subreg2":[(x, y, z), (x, y, z), (x, y, z)]
+            "subreg3":[(x, y, z), (x, y, z), (x, y, z)]
+        }
+        "Perfil": (...)
+        "Planta": (...)
+    }
+    De tal manera que diccionario_final : dict. de dict. de list. de tupl. 
+    y, por último, 
+    return diccionario_final
+    
+    """
+
     def crear_V(self, dictionary : dict):
         V = []
         """
@@ -44,7 +132,7 @@ class BloqueProyeccion:
         return V # V : list of tuples
 
 # --- Ejemplo de ejecución ---
-bloquecito = BloqueProyeccion("ola", 1)
+bloquecito = BloqueProyeccion("assets/bloques/prueba1.png", 1)
 
 # Datos coherentes para que la intersección no sea vacía:
 diccionario_ejemplo = {
@@ -55,3 +143,4 @@ diccionario_ejemplo = {
 
 resultado = bloquecito.crear_V(diccionario_ejemplo)
 print(f"Vértices 3D encontrados: {resultado}")
+bloquecito.detector_vacio()
