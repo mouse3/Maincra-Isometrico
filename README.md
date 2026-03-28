@@ -1,4 +1,4 @@
-We're making a Isometric videogame within the Maincraft's gender.
+We're making a Isometric videogame within the Minecraft's gender.
 This proyect is subject to constant changes due to the complicity of it's new functions such as a Creation of isometric blocks from a image like a texture
 and some other causes like:
   1. Optimization
