@@ -1,3 +1,4 @@
+from math import sqrt
 # SCREEN
 height = 600
 width = 800
@@ -19,17 +20,21 @@ fps_cap = 60
 fps_f_color = (255, 255, 255)
 
 # SPRITE
-velocity = 1 # ud. arbitraria.
+velocity = 0.75 # ud. arbitraria, no tne. magnitud.
+proporcion = 0.5 #if p=0.5 -> alpha = 45º
+# cell_h = cell_w/2 para q alpha=45º, i.e. cellw > cellh
 cell_w = 16  # El píxel nº cell_w se incluye.
-cell_h = 16  # El píxel nº cell_h se incluye.
+cell_h = cell_w*proporcion  # El píxel nº cell_h se incluye.
 sprite_path = "sprite/player2.png"
 
 #MAP
 # 0: grass
 # 1: sand
 # 2: water
+#tile_w > tile_h para q se vea hacia arriba
+# tile_h = tile_w/2 para q alpha=45º
 tile_w = 64
-tile_h = 32
+tile_h = tile_w*proporcion
 
 map_offset = (width//2,150)
 
