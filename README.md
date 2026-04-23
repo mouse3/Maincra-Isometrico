@@ -4,6 +4,6 @@ and some other causes like:
   1. Optimization
   2. Originality
   3. Modularity
-  4. Teamwork (I hate it ;)
+  4. Teamwork
   5. Some other changes are described in what2do.py
 
