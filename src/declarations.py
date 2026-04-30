@@ -180,6 +180,13 @@ class Jugador(Entidad):
 
 
 
+class Enemigo(Entidad):
+    def __init__(self, posicion, velocity, sprite_path, cell_w, cell_h, debug,
+                directions, scale):
+        # constructor de la clase padre
+        super().__init__(posicion, velocity, sprite_path, cell_w, cell_h, directions, scale)
+        
+        self.debug = debug
 
 
 

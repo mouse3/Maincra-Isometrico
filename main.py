@@ -1,12 +1,12 @@
 # main.py
 
 import pygame
-import math
+from math import sqrt, atan2, sin, cos
 
 from src.config import (
     height, width, f_size, f_type, bg_color, fps_pos, fps_cap, fps_f_color,
     window_title, mapa_data, cell_w, cell_h, sprite_path, velocity,
-    tile_w, tile_h, map_offset, min_zoom, max_zoom, proporcion
+    tile_w, tile_h, map_offset, min_zoom, max_zoom, proporcion, radio_disparo
 )
 
 import src.declarations
@@ -36,6 +36,19 @@ def main():
         posicion=(width//2, 200),
         velocity=velocity,
         sprite_path=sprite_path,
+        cell_w=cell_w,
+        cell_h=cell_h,
+        directions=[
+            "up", "up-right", "right", "down-right",
+            "down", "down-left", "left", "up-left"
+        ],
+        scale=3,
+        debug=True
+    )
+    enemigo1 = src.declarations.Enemigo(
+        posicion=(width//2, 200),
+        velocity=velocity,
+        sprite_path="sprite/full_black.png",
         cell_w=cell_w,
         cell_h=cell_h,
         directions=[
@@ -79,13 +92,22 @@ def main():
                     world_mouse_x = (mouse_x - cam_x) / zoom_level
                     world_mouse_y = (mouse_y - cam_y) / zoom_level
                     
-                    # Creamos la bala en la posición del jugador
+
+                    x_0, y_0 = jugador.posicion[0], jugador.posicion[1]
+                    x_obj, y_obj = world_mouse_x, world_mouse_y
+                    theta = atan2(y_obj - y_0, x_obj - x_0) # Ángulo al objetivo
+                    # x -> Cos; y-> Sen
+                    spawn_x = x_0 + radio_disparo * cos(theta)
+                    spawn_y = y_0 + radio_disparo * sin(theta)
                     nueva_bala = src.declarations.Bala(
-                        posicion_inicial=list(jugador.posicion), 
-                        objetivo_pos=(world_mouse_x, world_mouse_y),
-                        sprite_path="sprite/player2.png"
+                        posicion_inicial=[spawn_x, spawn_y], 
+                        objetivo_pos=(x_obj, y_obj),
+                        sprite_path="sprite/bala.png"
                     )
                     balas_group.add(nueva_bala)
+
+        if pygame.sprite.spritecollide(enemigo1, balas_group, False):
+            print("colided")
 
 
 
@@ -103,16 +125,18 @@ def main():
 
 
         dx, dy = 0, 0
-        if keys[pygame.K_UP] or keys[pygame.K_w]:    dy = -1
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:  dy = 1
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:  dx = -1
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]: dx = 1
+        a=1
+        if keys[pygame.K_LSHIFT] : a = 2
+        if keys[pygame.K_UP] or keys[pygame.K_w]:    dy = -1*a ; a=1
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:  dy = 1 *a ; a=1
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:  dx = -1 *a ; a=1
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]: dx = 1 *a ; a=1
 
         # Mantenida igual
         if dx != 0 or dy != 0:
             norm_dx, norm_dy = dx, dy
             if dx != 0 and dy != 0:
-                norm_dx /= math.sqrt(2)*proporcion; norm_dy /= math.sqrt(2)*proporcion
+                norm_dx /= sqrt(2)*proporcion; norm_dy /= sqrt(2)*proporcion
                 
             desired_px = norm_dx * velocity
             desired_py = norm_dy * velocity
@@ -138,7 +162,7 @@ def main():
 
         # Elimina balas lejanas para no saturar la memoria
         for bala in balas_group:
-            dist = math.sqrt((bala.posicion[0]-jugador.posicion[0])**2 + (bala.posicion[1]-jugador.posicion[1])**2)
+            dist = sqrt((bala.posicion[0]-jugador.posicion[0])**2 + (bala.posicion[1]-jugador.posicion[1])**2)
             if dist > 2000: # Si se aleja más de 2000 píxeles del jugador, se borra
                 bala.kill()
 
@@ -171,6 +195,14 @@ def main():
         p_draw_x = (jugador.posicion[0] * zoom_level) + cam_x
         p_draw_y = (jugador.posicion[1] * zoom_level) + cam_y
         screen.blit(player_scaled, player_scaled.get_rect(midbottom=(p_draw_x, p_draw_y)))
+
+        # Dibujar enemigo 1
+
+        enemigo1_w, enemigo1_h = enemigo1.image.get_size()
+        enemigo1_scaled = pygame.transform.scale(enemigo1.image, (int(enemigo1_w * zoom_level), int(enemigo1_h * zoom_level)))
+        enemigo1p_draw_x = (enemigo1.posicion[0] * zoom_level) + cam_x
+        enemigo1p_draw_y = (enemigo1.posicion[1] * zoom_level) + cam_y
+        screen.blit(enemigo1_scaled, enemigo1_scaled.get_rect(midbottom=(enemigo1p_draw_x, enemigo1p_draw_y)))
 
         # UI
         fps_text = font.render(f"FPS: {round(clock.get_fps())} | Zoom: {round(zoom_level, 2)}", True, fps_f_color)

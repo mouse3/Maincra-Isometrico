@@ -11,7 +11,7 @@ f_size = 20
 
 
 # BACKGROUND
-bg_color = (128, 0, 128)
+bg_color = (127, 191, 198)
 
 
 # FPS
@@ -27,13 +27,15 @@ cell_w = 16  # El píxel nº cell_w se incluye.
 cell_h = cell_w*proporcion  # El píxel nº cell_h se incluye.
 sprite_path = "sprite/player2.png"
 
+radio_disparo = 20 # En px
+
 #MAP
 # 0: grass
 # 1: sand
 # 2: water
 #tile_w > tile_h para q se vea hacia arriba
 # tile_h = tile_w/2 para q alpha=45º
-tile_w = 64
+tile_w = 64*2
 tile_h = tile_w*proporcion
 
 map_offset = (width//2,150)
